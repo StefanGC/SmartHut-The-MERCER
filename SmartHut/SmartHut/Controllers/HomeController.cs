@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SmartHut.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 
 namespace SmartHut.Controllers
 {
@@ -28,6 +34,12 @@ namespace SmartHut.Controllers
 
         public IActionResult Privacy()
         {
+            return View();
+        }
+
+        public IActionResult HotelSystem()
+        {
+            ViewData["JWTToken"] = User.FindFirstValue("jwtToken");
             return View();
         }
 
