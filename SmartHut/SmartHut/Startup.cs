@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,6 +39,22 @@ namespace SmartHut
                     .Build();
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
+
+            services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options =>
+            {
+                options.Authority = options.Authority + "/v2.0/";
+                options.Events = new OpenIdConnectEvents
+                {
+                    OnTokenValidated = ctx =>
+                    {
+                        var jwtToken = ctx.SecurityToken.RawData;
+                        ((ClaimsIdentity)ctx.Principal.Identity).AddClaim(new
+                        Claim("jwtToken", jwtToken));
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
             services.AddRazorPages();
         }
 
