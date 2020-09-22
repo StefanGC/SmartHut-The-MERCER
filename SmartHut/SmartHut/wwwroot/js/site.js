@@ -4,11 +4,10 @@
 // Write your JavaScript code.
 
 //Variabler
-let SmartHut = document.getElementById("SmartHut");
+let smart = document.getElementById("SmartHut");
 let myJWTToken = document.getElementById("JWTToken").value;
 let server = "https://api.smarthut.se";
 let buildingId = "9eee90c3-55cb-48a1-8aa7-13b7083f2b6f";
-
 
 let includeDevices = true; 
 let devicesId = [
@@ -37,7 +36,6 @@ function GetMyBuildingId() {
         .catch(err => console.log(JSON.stringify(err)));
 }
 
-
 //GET: /BuildingInfo/GetMyBuilding
 function GetMyBuilding() {
     fetch(`${server}/BuildingInfo/GetMyBuilding`, {
@@ -56,7 +54,7 @@ function GetMyBuilding() {
         text += `<p>Stad: ${jsonResponse.city} </p>`;
         text += `<p>Land: ${jsonResponse.country} </p>`;
         text += `<p>Postnummer: ${jsonResponse.postalCode} </p>`;
-        SmartHut.innerHTML = text; 
+        smart.innerHTML = text; 
     })
     .catch(err => console.log(JSON.stringify(err)));
 }
@@ -84,7 +82,7 @@ function GetBuildingInfo() {
             text += `<p>id: ${jsonResponse.devices[i].id} </p>`;
             text += `<p>name: ${jsonResponse.devices[i].name} </p>`;
         }
-        SmartHut.innerHTML = text;
+        smart.innerHTML = text;
     })
     .catch(err => console.log(JSON.stringify(err)));
 }
@@ -112,7 +110,7 @@ function GetBuildingDevices() {
             text += `<p>id: ${jsonResponse[i].id} </p>`;
             text += `<p>name: ${jsonResponse[i].name} </p>`;
         }
-        SmartHut.innerHTML = text;
+        smart.innerHTML = text;
     })
     .catch(err => console.log(JSON.stringify(err)));
 }
@@ -138,7 +136,34 @@ function GetDeviceInfo(id) {
             text += `<p>metricType: ${jsonResponse.metricType} </p>`;
             text += `<p>id: ${jsonResponse.id} </p>`;
             text += `<p>name: ${jsonResponse.name} </p>`;
-            SmartHut.innerHTML = text;
+            smart.innerHTML = text;
+        })
+        .catch(err => console.log(JSON.stringify(err)));
+}
+
+// /DeviceInfo/GetAlarmLogs/{deviceId}
+function GetAlarmLogs(deviceId) {
+    fetch(`${server}/DeviceInfo/GetAlarmLogs/${deviceId}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${myJWTToken}`
+        }
+    })
+        .then(response => response.json())
+        .then(function (jsonResponse) {
+            let text = `<h3>Get Alarm Logs</h3>`;
+            
+            for (let i = 0; i < jsonResponse.length; i++) {
+                text += `<hr>`;
+                text += `<p>id: ${jsonResponse[i].id} </p>`;
+                text += `<p>deviceId: ${jsonResponse[i].deviceId} </p>`;
+                text += `<p>state: ${jsonResponse[i].state} </p>`;
+                text += `<p>timeStamp: ${jsonResponse[i].timeStamp} </p>`;  
+            }
+
+            smart.innerHTML = text;
         })
         .catch(err => console.log(JSON.stringify(err)));
 }
@@ -147,5 +172,4 @@ GetMyBuilding();
 //GetBuildingInfo();
 //GetBuildingDevices();
 //GetDeviceInfo(devicesId[0]);
-
-
+//GetAlarmLogs(devicesId[0]);

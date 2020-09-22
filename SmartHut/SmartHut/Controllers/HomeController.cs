@@ -13,6 +13,8 @@ using SmartHut.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
+using Microsoft.AspNetCore.Authentication.AzureAD.UI.Pages.Internal;
+using Microsoft.AspNetCore.Identity;
 
 namespace SmartHut.Controllers
 {
@@ -39,6 +41,10 @@ namespace SmartHut.Controllers
 
         public IActionResult HotelSystem()
         {
+            // Hämtar User email
+            ViewData["Email"] = User.FindFirst(ClaimTypes.Email).Value;
+
+            // Hämtar token
             ViewData["JWTToken"] = User.FindFirstValue("jwtToken");
             return View();
         }
