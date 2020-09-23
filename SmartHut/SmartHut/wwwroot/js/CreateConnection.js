@@ -18,12 +18,12 @@ function createConn() {
         url = jsonResponse.url;
         accessToken = jsonResponse.accessToken;
     })
-    .then(() => Conn())
+    .then(() => Connection())
 }
 
 // Connection till SignalR och få data i realtid med newTelemetry
 
-function Conn() {
+function Connection() {
     const connection = new signalR.HubConnectionBuilder()
         .withUrl(url, { accessTokenFactory: () => accessToken })
         .configureLogging(signalR.LogLevel.Information)
