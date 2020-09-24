@@ -76,8 +76,8 @@ function GetBuildingDevices() {
                             <button type="button"
                                 class="btn btn-danger"
                                 id="btn-${jsonResponse[i].id}"
-                                style="visibility: hidden;
-                                onclick="resetDevice(${jsonResponse[i].id})">Återställ</button>
+                                style="visibility: hidden;"
+                                onclick="resetDevice('${jsonResponse[i].id}')">Återställ</button>
                         </div>
                     `;
                 text += `<p class="text-center">Godkänd intervall [${jsonResponse[i].minValue} - ${jsonResponse[i].maxValue}]</p>`;
@@ -127,10 +127,7 @@ function Connection() {
         { 
             document.getElementById(`btn-${getData[0].deviceId.toLowerCase()}`).style.visibility = "visible";
         }
-        else {
-            document.getElementById(`btn-${getData[0].deviceId.toLowerCase()}`).style.visibility = "hidden";
-        }
-        console.log(`DeviceId: ${getData[0].deviceId}, Värde: ${getData[0].value.toFixed(0)}, Min-värde: ${document.getElementById(`MIN-${getData[0].deviceId.toLowerCase()}`).value}, Max-värde: ${document.getElementById(`MAX-${getData[0].deviceId.toLowerCase()}`).value}`);
+        //console.log(`DeviceId: ${getData[0].deviceId}, Värde: ${getData[0].value.toFixed(0)}, Min-värde: ${document.getElementById(`MIN-${getData[0].deviceId.toLowerCase()}`).value}, Max-värde: ${document.getElementById(`MAX-${getData[0].deviceId.toLowerCase()}`).value}`);
     });
 
     async function start() {
@@ -152,17 +149,19 @@ function Connection() {
 
 function resetDevice(deviceId) {
     user = document.getElementById("User").value;
+    document.getElementById(`btn-${deviceId}`).style.visibility = "hidden";
 
     fetch(`https://smarthut.azurewebsites.net/api/restorealarm`, {
         method: 'POST',
         headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'deviceId': deviceId,
-            'userName': user
-        }
+            'Accept': '*/*',
+            'Authorization': `Bearer ${myJWTToken}`            
+        },
+        body: JSON.stringify({'deviceId': deviceId,'userName': user})
     })
+        .then(console.log )
         .catch(err => console.log(JSON.stringify(err)));
+
 }
 
 
