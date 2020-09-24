@@ -1,5 +1,5 @@
-﻿//Variabler
-
+﻿
+//Variabler
 var buildingId;
 var buildingName;
 var address;
@@ -60,7 +60,8 @@ function GetBuildingDevices() {
 
                 text += `<div class="col-md-3 room-card">
                             <div class="room-item">
-                                <h5 class="text-center">${name}</h5><hr>`;
+                                <h5 class="text-center">${name}</h5><hr>
+                                <div class="text-center">`;
                 switch (jsonResponse[i].metricType) {
                     case 1:
                         text += `Värme (°C):  `; 
@@ -71,13 +72,15 @@ function GetBuildingDevices() {
                     default:
                         console.log("Error in metricType");
                 }
-                text += `<input type="text" id="${jsonResponse[i].id}" name="${jsonResponse[i].id}" />
-                        <button type="button"
-                            class="btn btn-danger"
-                            id="btn-${jsonResponse[i].id}"
-                            style="display: none;"
-                            onclick="resetDevice(${jsonResponse[i].id})">Återställ</button>
+                text += `   <input type="text" id="${jsonResponse[i].id}" name="${jsonResponse[i].id}" />
+                            <button type="button"
+                                class="btn btn-danger"
+                                id="btn-${jsonResponse[i].id}"
+                                style="visibility: hidden;
+                                onclick="resetDevice(${jsonResponse[i].id})">Återställ</button>
+                        </div>
                     `;
+                text += `<p class="text-center">Godkänd intervall [${jsonResponse[i].minValue} - ${jsonResponse[i].maxValue}]</p>`;
                 text += `<input id="MIN-${jsonResponse[i].id}" type="hidden" value="${jsonResponse[i].minValue}" /> `;
                 text += `<input id="MAX-${jsonResponse[i].id}" type="hidden" value="${jsonResponse[i].maxValue}" /> `
                 text += `   </div>
@@ -119,13 +122,13 @@ function Connection() {
     connection.on("newTelemetry", (getData) => {
         document.getElementById(getData[0].deviceId.toLowerCase()).value = getData[0].value.toFixed(0);
 
-        if ((document.getElementById(`MIN-${getData[0].deviceId.toLowerCase()}`).value)  >= getData[0].value.toFixed(0) 
-            || getData[0].value.toFixed(0) >= (document.getElementById(`MAX-${getData[0].deviceId.toLowerCase()}`).value) ) 
+        if ((document.getElementById(`MIN-${getData[0].deviceId.toLowerCase()}`).value)  > getData[0].value.toFixed(0) 
+            || getData[0].value.toFixed(0) > (document.getElementById(`MAX-${getData[0].deviceId.toLowerCase()}`).value) ) 
         { 
-            document.getElementById(`btn-${getData[0].deviceId.toLowerCase()}`).style.display = "initial";
+            document.getElementById(`btn-${getData[0].deviceId.toLowerCase()}`).style.visibility = "visible";
         }
         else {
-            document.getElementById(`btn-${getData[0].deviceId.toLowerCase()}`).style.display = "none";
+            document.getElementById(`btn-${getData[0].deviceId.toLowerCase()}`).style.visibility = "hidden";
         }
         console.log(`DeviceId: ${getData[0].deviceId}, Värde: ${getData[0].value.toFixed(0)}, Min-värde: ${document.getElementById(`MIN-${getData[0].deviceId.toLowerCase()}`).value}, Max-värde: ${document.getElementById(`MAX-${getData[0].deviceId.toLowerCase()}`).value}`);
     });
@@ -155,7 +158,6 @@ function resetDevice(deviceId) {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${myJWTToken}`,
             'deviceId': deviceId,
             'userName': user
         }
